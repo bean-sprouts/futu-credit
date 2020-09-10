@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible"
+          content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 15px;
+        }
+        input {
+            margin-bottom: 10px;
+            height: 15px;
+            padding: 6px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+<input type="text"
+       id="codeInput"
+       placeholder="输入股票代码" />
+<input type="text"
+       id="lotNumInput"
+       placeholder="输入认购手数" />
+<input type="password"
+       id="passwordInput"
+       placeholder="输入密码" />
+<input type="text"
+       id="timeoutInput"
+       value="5000"
+       placeholder="刷新间隔(分钟)" />
+<button id="startBtn" style="width: 200px;">开始认购</button>
+<!--<div id="resultText"></div>
+<ol id="list"
+    style="width: 740px;height: 85vh;overflow: auto;"></ol>-->
+<script src="js/md5.min.js"></script>
+<script src="js/popup.js"></script>
+</body>
+
+</html>
