@@ -26,11 +26,11 @@ startBtn.onclick = function () {
         password,
         timeout
     };
-    chrome.tabs.create({ url: `https://ipo.futuhk.com/apply?stockCode=${code}`, active: false }, (tab) => {
-        setTimeout(() => {
-            chrome.tabs.sendMessage(tab.id, params);
-        }, 10000);
-    });
+    const q = new URLSearchParams();
+    for (let key in params) {
+        q.append(key, params[key]);
+    }
+    chrome.tabs.create({ url: `https://ipo.futuhk.com/apply?${q}`, active: false });
    /* chrome.tabs.query({
         url: 'https://ipo.futuhk.com/!*',
         currentWindow: true

@@ -90,9 +90,17 @@ function run(params) {
 
 // init();
 // 因为必须从页面的meta标签取csrf token，所以只能通过注入JS的方式实现
-chrome.runtime.onMessage.addListener(request => {
+const searchParams = new URLSearchParams(window.location.search);
+if (searchParams.has('method')) {
+  const params = {};
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+  if (searchParams.get('method') === 'run') run(params);
+}
+/*chrome.runtime.onMessage.addListener(request => {
   if (request.method === 'run') run(request);
-});
+});*/
 
 
 
