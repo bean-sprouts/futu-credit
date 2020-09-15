@@ -16,6 +16,18 @@ timeoutInput.onchange = function (e) {
     timeout = e.target.value;
 };
 
+chrome.storage.sync.get(['code', 'lotNum'], function (res) {
+    // console.log('res', res);
+    // 获取保存的间隔检查时间
+    if (typeof res.code !== 'undefined') {
+        code = res.code;
+        codeInput.value = res.code;
+    }
+    if (typeof res.lotNum !== 'undefined') {
+        lotNum = res.lotNum;
+        lotNumInput.value = res.lotNum;
+    }
+});
 
 startBtn.onclick = function () {
     if (!code || !lotNum || !password) return alert('不能为空！');
@@ -30,6 +42,7 @@ startBtn.onclick = function () {
     for (let key in params) {
         q.append(key, params[key]);
     }
+    chrome.storage.sync.set({ code, lotNum });
     chrome.tabs.create({ url: `https://ipo.futuhk.com/apply?${q}`, active: false });
    /* chrome.tabs.query({
         url: 'https://ipo.futuhk.com/!*',
