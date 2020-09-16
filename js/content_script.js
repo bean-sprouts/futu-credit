@@ -30,7 +30,7 @@ function getCredits(params) {
           return alert('可用现金不足');
         }
         // minAssetPowerBase10倍融资需要的本金，minAssetPower最大融资需要的现金金额
-        if (bank / lotSize > lotNum && minAssetPower === minAssetPowerBase) {
+        if (bank / lotSize >= lotNum && minAssetPower === minAssetPowerBase) {
           // 可用融资手数大于期望的值且使用10倍融资，发起认购
           // 已知password采用md5加密
           // csrf的token存储在页面的meta标签中
@@ -85,7 +85,7 @@ function getCredits(params) {
 
 
 function run(params) {
-  getCredits(params);
+  timer = setTimeout(() => getCredits(params), params.timeout);
 }
 
 // init();
