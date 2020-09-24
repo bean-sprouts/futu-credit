@@ -2,7 +2,7 @@ let timer;
 
 // 获取当前银行融资额度
 function getCredits(params) {
-  const { code, lotNum, password, timeout } = params;
+  const { stockCode: code, lotNum, password, timeout } = params;
   const _params = { ...params, _: new Date().getTime() };
   const q = new URLSearchParams();
   for (let key in _params) {
@@ -17,68 +17,74 @@ function getCredits(params) {
     }
   }).then(res => {
     // console.log('res---getApplyBaseInformation', res);
-    const { data: { accounts, stock: { stockId, stockCode, lotSize } } } = res;
-    const accountId = accounts.find(item => item.isMargin).accountId;
-    // 获取购买力
-    return fetch(`https://ipo.futuhk.com/api/getPower?stockId=${stockId}&tid=0&accountId=${accountId}&stockCode=${stockCode}&_=${new Date().getTime()}`)
-      .then(res => res.json()).then(res => {
-        // console.log('res---getPower', res);
-        const { data: { availableCash, lotInfo, maxApplyQty: { bank } } } = res;
-        const { minAssetPower, minAssetPowerBase, stockPrice } = lotInfo.find(item => item.stockNum ===  lotNum * lotSize);
-        if (availableCash < minAssetPowerBase) {
-          console.log('可用现金不足');
-          return alert('可用现金不足');
-        }
-        // minAssetPowerBase10倍融资需要的本金，minAssetPower最大融资需要的现金金额
-        if (bank / lotSize >= lotNum && minAssetPower === minAssetPowerBase) {
-          // 可用融资手数大于期望的值且使用10倍融资，发起认购
-          // 已知password采用md5加密
-          // csrf的token存储在页面的meta标签中
-          // request_id为时间戳加两位数字随机数
-          const csrf = document.getElementsByTagName('meta')['csrf'].content;
-          const request_id = `${new Date().getTime()}${Math.round(Math.random() * 100).toString()}`;
-          // 获取token
-          return fetch(`https://ipo.futuhk.com/api/r_token?_=${new Date().getTime()}`).then(res => res.json()).then(res => {
-            const { data: { secret } } = res;
-            return fetch(`https://ipo.futuhk.com/api/applyStock?request_id=${request_id}`, {
-              method: 'POST',
-              headers: {
-                'content-type': 'application/json'
-              },
-              body: JSON.stringify({
-                accountId,
-                assetMargin: 0,
-                buyAmount: stockPrice,
-                buyCount: lotNum * lotSize,
-                cashPart: minAssetPowerBase,
-                csrf,
-                isMarginIpo: 1,
-                password: md5(password),
-                r_token: secret,
-                stockId,
-                tid: 0
+    if(res.code === 0) {
+      const { data: { accounts, stock: { stockId, stockCode, stockName, lotSize } } } = res;
+      const accountId = accounts.find(item => item.isMargin).accountId;
+      // 获取购买力
+      return fetch(`https://ipo.futuhk.com/api/getPower?stockId=${stockId}&tid=0&accountId=${accountId}&stockCode=${stockCode}&_=${new Date().getTime()}`)
+        .then(res => res.json()).then(res => {
+          // console.log('res---getPower', res);
+          const { data: { availableCash, lotInfo, maxApplyQty: { bank } } } = res;
+          const { minAssetPower, minAssetPowerBase, stockPrice } = lotInfo.find(item => item.stockNum ===  lotNum * lotSize);
+          if (availableCash < minAssetPowerBase) {
+            console.log('可用现金不足');
+            return alert('可用现金不足');
+          }
+          // minAssetPowerBase10倍融资需要的本金，minAssetPower最大融资需要的现金金额
+          if (bank / lotSize >= lotNum && minAssetPower === minAssetPowerBase) {
+            // 可用融资手数大于期望的值且使用10倍融资，发起认购
+            // 已知password采用md5加密
+            // csrf的token存储在页面的meta标签中
+            // request_id为时间戳加两位数字随机数
+            const csrf = document.getElementsByTagName('meta')['csrf'].content;
+            const request_id = `${new Date().getTime()}${Math.round(Math.random() * 100).toString()}`;
+            // 获取token
+
+            return fetch(`https://ipo.futuhk.com/api/r_token?_=${new Date().getTime()}`).then(res => res.json()).then(res => {
+              const { data: { secret } } = res;
+              return fetch(`https://ipo.futuhk.com/api/applyStock?request_id=${request_id}`, {
+                method: 'POST',
+                headers: {
+                  'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                  accountId,
+                  assetMargin: 0,
+                  buyAmount: stockPrice,
+                  buyCount: lotNum * lotSize,
+                  cashPart: minAssetPowerBase,
+                  csrf,
+                  isMarginIpo: 1,
+                  password: md5(password),
+                  r_token: secret,
+                  stockId,
+                  tid: 0
+                })
+              }).then(res => res.json()).then(res => {
+                console.log('res---result', res);
+                switch (res.code) {
+                  case 0:
+                    console.log('认购成功');
+                    chrome.runtime.sendMessage({type: 'alert', message: `${stockName}成功认购${lotNum}手(${lotNum * lotSize}股)`});
+                    timer && clearTimeout(timer);
+                    break;
+                  case 500004:
+                  case 800004:
+                    console.log(res.message);
+                    timer && clearTimeout(timer);
+                    break;
+                  default:
+                    timer = setTimeout(() => getCredits(params), timeout);
+                }
               })
-            }).then(res => res.json()).then(res => {
-              console.log('res---result', res);
-              switch (res.code) {
-                case 0:
-                  console.log('认购成功');
-                  timer && clearTimeout(timer);
-                  break;
-                case 500004:
-                case 800004:
-                  console.log(res.message);
-                  timer && clearTimeout(timer);
-                  break;
-                default:
-                  timer = setTimeout(() => getCredits(params), timeout);
-              }
-            })
-          });
-        } else {
-          timer = setTimeout(() => getCredits(params), timeout);
-        }
-      })
+            });
+          } else {
+            timer = setTimeout(() => getCredits(params), timeout);
+          }
+        })
+    } else {
+      timer = setTimeout(() => getCredits(params), timeout);
+    }
   })
     .catch(err => { console.log(err) })
 }
