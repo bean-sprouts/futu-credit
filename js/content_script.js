@@ -24,7 +24,7 @@ function getCredits(params) {
       return fetch(`https://ipo.futuhk.com/api/getPower?stockId=${stockId}&tid=0&accountId=${accountId}&stockCode=${stockCode}&_=${new Date().getTime()}`)
         .then(res => res.json()).then(res => {
           // console.log('res---getPower', res);
-          const { data: { availableCash, lotInfo, maxApplyQty: { bank } } } = res;
+          const { data: { cashApply: { availableCash }, lotInfo, marginAvailableAmount: bank } } = res;
           const { minAssetPower, minAssetPowerBase, stockPrice } = lotInfo.find(item => item.stockNum ===  lotNum * lotSize);
           if (availableCash < minAssetPowerBase) {
             console.log('可用现金不足');
