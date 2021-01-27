@@ -27,16 +27,16 @@ function getCredits(params) {
           if (res.code === 0) {
             const { data: { cashApply: { availableCash }, lotInfo, marginAvailableAmount: bank } } = res;
             const { minAssetPower, minAssetPowerBase, stockPrice } = lotInfo.find(item => item.stockNum === lotNum * lotSize);
-            if (availableCash < minAssetPowerBase) {
-              console.log('可用现金不足');
-              return alert('可用现金不足');
-            }
             // minAssetPowerBase10倍融资需要的本金，minAssetPower最大融资需要的现金金额
             if (bank / lotSize >= lotNum && minAssetPower === minAssetPowerBase) {
               // 可用融资手数大于期望的值且使用10倍融资，发起认购
               // 已知password采用md5加密
               // csrf的token存储在页面的meta标签中
               // request_id为时间戳加两位数字随机数
+              if (availableCash < minAssetPowerBase) {
+                console.log('可用现金不足');
+                return alert('可用现金不足');
+              }
               const csrf = document.getElementsByTagName('meta')['csrf'].content;
               const request_id = `${new Date().getTime()}${Math.round(Math.random() * 100).toString()}`;
               // 获取token
