@@ -13,7 +13,7 @@
 
 ## 安装方法
 
-1. 下载插件并解压，[点这里](https://github.com/bean-sprouts/futu-credit/releases)
+1. [点这里](https://github.com/bean-sprouts/futu-credit/releases)，下载插件**futu-credit-vx.x.x.zip**并解压  
 
 2. 下载chrome浏览器
 
@@ -29,3 +29,4 @@
 
 7. 点击扩展程序图标，输入对应选项开抢吧！
 
+   
