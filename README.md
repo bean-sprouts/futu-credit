@@ -1,4 +1,4 @@
-# futu港股打新抢额度工具
+# 富途港股打新抢额度工具
 
 ## 最终效果
 
@@ -13,7 +13,7 @@
 
 ## 安装方法
 
-1. 下载插件并解压，[点这里](https://github.com/bean-sprouts/futu-credit/releases/tag/v1.0.0)
+1. 下载插件并解压，[点这里](https://github.com/bean-sprouts/futu-credit/releases)
 
 2. 下载chrome浏览器
 
@@ -23,7 +23,9 @@
 
 5. 点击**加载已解压的扩展程序**，选择第一步下载后解压的插件目录
 
-6. 点击扩展程序列表，选择固定扩展程序<img src="https://i.loli.net/2021/01/27/ZsahcK2EBYQodwl.png" alt="image-20210127135232926" style="zoom:70%;" />
+6. 点击扩展程序列表，选择固定扩展程序
+
+   ![image-20210127140802348](https://i.loli.net/2021/01/27/1jZI6WbTYlsdJ4A.png)
 
 7. 点击扩展程序图标，输入对应选项开抢吧！
 
